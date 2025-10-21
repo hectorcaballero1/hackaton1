@@ -1,4 +1,4 @@
-package org.example.hackaton01.entity;
+package org.example.hackaton01.entity.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
