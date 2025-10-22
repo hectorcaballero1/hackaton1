@@ -82,6 +82,20 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
+        <!-- Azure AI Inference SDK para GitHub Models -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-ai-inference</artifactId>
+            <version>1.0.0-beta.2</version>
+        </dependency>
+
+        <!-- Azure Core para credenciales -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core</artifactId>
+            <version>1.54.0</version>
+        </dependency>
+
         <!-- Validación -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
