@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GitHubModelsConfig {
     // Líneas 1-3: Configuración (ahora con @Value)
-    @Value("${github.models.token}")
+    @Value("${github.token}")
     private String githubToken;
 
-    @Value("${github.models.endpoint:https://models.github.ai/inference}")
+    @Value("${github.models.url}")
     private String endpoint;
 
-    @Value("${github.models.model-id:openai/gpt-5-mini}")
+    @Value("${model.id}")
     private String modelId;
 
     // Líneas 4-7: Crear cliente (ahora como Bean)
