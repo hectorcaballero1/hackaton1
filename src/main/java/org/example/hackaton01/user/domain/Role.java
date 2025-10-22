@@ -1,4 +1,4 @@
-package org.example.hackaton01.enums;
+package org.example.hackaton01.user.domain;
 
 public enum Role {
     CENTRAL,

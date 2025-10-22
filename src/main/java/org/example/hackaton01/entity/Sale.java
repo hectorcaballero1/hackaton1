@@ -1,4 +1,4 @@
-package org.example.hackaton01.entity.sale;
+package org.example.hackaton01.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
