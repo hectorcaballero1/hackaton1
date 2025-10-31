@@ -1,20 +1,15 @@
-package org.example.hackaton01.LLM;
+package org.example.hackaton01.report.service;
 
 import com.azure.ai.inference.ChatCompletionsClient;
-import com.azure.ai.inference.models.ChatCompletions;
-import com.azure.ai.inference.models.ChatCompletionsOptions;
-import com.azure.ai.inference.models.ChatRequestMessage;
-import com.azure.ai.inference.models.ChatRequestSystemMessage;
-import com.azure.ai.inference.models.ChatRequestUserMessage;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.azure.ai.inference.models.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.hackaton01.sale.saleagregation.dto.SalesAggregatesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,20 +21,10 @@ public class LLMService {
     @Value("${github.models.model-id}")
     private String modelId;
 
-    /**
-     * Genera un resumen de ventas usando el LLM
-     * @param totalUnits Total de unidades vendidas
-     * @param totalRevenue Total de ingresos
-     * @param topSku SKU más vendido
-     * @param topBranch Sucursal con más ventas
-     * @return Resumen en lenguaje natural (máx 120 palabras)
-     */
-
-    public String generateSalesSummary(int totalUnits, double totalRevenue,
-                                       String topSku, String topBranch) {
+    public String generateSummary(SalesAggregatesResponse aggregates) {
         try {
-            log.info("Generando resumen con LLM para {} unidades, ${} revenue",
-                    totalUnits, totalRevenue);
+            log.info("Generando resumen para {} unidades, ${} revenue",
+                    aggregates.getTotalUnits(), aggregates.getTotalRevenue());
 
             String userPrompt = String.format(
                     "Con estos datos de ventas semanales: " +
@@ -47,7 +32,10 @@ public class LLMService {
                             "Genera un resumen ejecutivo en español de máximo 120 palabras " +
                             "para enviar por email a gerentes. Sé conciso, profesional y destaca " +
                             "los insights más importantes.",
-                    totalUnits, totalRevenue, topSku, topBranch
+                    aggregates.getTotalUnits(),
+                    aggregates.getTotalRevenue(),
+                    aggregates.getTopSku(),
+                    aggregates.getTopBranch()
             );
 
             List<ChatRequestMessage> messages = Arrays.asList(
@@ -72,17 +60,18 @@ public class LLMService {
 
         } catch (Exception e) {
             log.error("Error al generar resumen con LLM: {}", e.getMessage(), e);
-            throw new LLMServiceException("No se pudo generar el resumen. " +
-                    "El servicio de IA no está disponible.", e);
+            return buildFallbackSummary(aggregates);
         }
     }
 
-    /**
-     * Excepción personalizada para errores del LLM
-     */
-    public static class LLMServiceException extends RuntimeException {
-        public LLMServiceException(String message, Throwable cause) {
-            super(message, cause);
-        }
+    private String buildFallbackSummary(SalesAggregatesResponse aggregates) {
+        return String.format(
+                "Resumen de ventas Oreo: Se vendieron %d unidades con un revenue total de $%.2f. " +
+                        "El SKU más vendido fue %s y la sucursal con mejor desempeño fue %s.",
+                aggregates.getTotalUnits(),
+                aggregates.getTotalRevenue(),
+                aggregates.getTopSku(),
+                aggregates.getTopBranch()
+        );
     }
 }

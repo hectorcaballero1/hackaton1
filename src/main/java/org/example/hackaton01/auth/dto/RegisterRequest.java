@@ -31,4 +31,6 @@ public class RegisterRequest {
     private String role;
 
     private String branch; // Obligatorio si role es BRANCH, null si es CENTRAL
+
+
 }

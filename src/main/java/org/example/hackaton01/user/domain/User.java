@@ -1,7 +1,9 @@
 package org.example.hackaton01.user.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,50 +19,69 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User implements UserDetails {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false, unique = true, length = 30)
+    @NotBlank(message = "Username es obligatorio")
+    @Size(min = 3, max = 30, message = "Username entre 3 y 30 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9_.]+$", message = "username, contine caracteres alfanuméricos")
+    @Column(unique = true, nullable = false, length = 30)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Email obligatorio ")
+    @Email(message = "Email en formato valido")
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @NotBlank(message = "Password es obligatorio")
+    @Size(min = 8, message = "Password con minimo 8 caracteres")
     @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private UserRole role;
 
-    @Column(length = 100)
-    private String branch; // Obligatorio si role es BRANCH, null si es CENTRAL
+    @Column
+    private String branch; // null si es CENTRAL, obligatorio si es BRANCH
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+
+    // validacion personalizada: Branch obligatorio si es BRANCH
+    // validamos el usuario se branch
+    @AssertTrue(message = "Branch es obligatorio para usuarios BRANCH")
+    private boolean isBranchValid() {
+        if (role == UserRole.ROLE_BRANCH) {
+            // true si branch no es nulo o vacio
+            return branch != null && !branch.trim().isEmpty();
+        }
+        return true;
+    }
+    // Callbacks JPA para fechas automáticas, pasamos las fechas
+    // fecha automatica al crear
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+    // fecha automatica al actualizar
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
-    // Implementación de UserDetails para Spring Security
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

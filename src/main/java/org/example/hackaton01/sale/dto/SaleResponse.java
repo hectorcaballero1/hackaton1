@@ -19,5 +19,9 @@ public class SaleResponse {
     private String branch;
     private LocalDateTime soldAt;
     private String createdBy;
+    // hasta aqui
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private BigDecimal total;
+
 }
