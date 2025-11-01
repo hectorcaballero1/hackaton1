@@ -55,7 +55,7 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
         claims.put("branch", branch);
-        claims.put("email", userDetails.getUsername()); // Guardamos el username también
+//        claims.put("email", userDetails.getUsername()); // Guardamos el username también
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -85,4 +85,6 @@ public class JwtUtil {
     public Integer getExpirationTime() {
         return expiration;
     }
+
+
 }

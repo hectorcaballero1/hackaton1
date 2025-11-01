@@ -1,35 +1,31 @@
 package org.example.hackaton01.sale.infrastructure;
 
-import org.example.hackaton01.sale.Sale;
+import org.example.hackaton01.sale.domain.Sale;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface SaleRepository extends JpaRepository<Sale, String> {
-
-    // Buscar ventas por sucursal
+public interface SaleRepository extends JpaRepository<Sale, Long> {
+    // Agrega este método en tu repository
+    List<Sale> findBySoldAtBetweenAndBranch(LocalDateTime startDate, LocalDateTime endDate, String branch);
+    // para los reportes asincronicos
+    List<Sale> findByBranch(String branch);
+    // para el reposrte asincrono (filtrado por fecha para CENTRAL)
+    List<Sale> findBySoldAtBetween(LocalDateTime start, LocalDateTime end);
+    // para el reposte asincronico (filtrado por fecha y por branchs)
+    List<Sale> findByBranchAndSoldAtBetween(String branch, LocalDateTime from, LocalDateTime to);
+    // para los endopints
+    //  PAGINACIÓN: Ventas por sucursal (para usuarios BRANCH)
     Page<Sale> findByBranch(String branch, Pageable pageable);
 
-    // Buscar ventas por rango de fechas
-    @Query("SELECT s FROM Sale s WHERE s.soldAt BETWEEN :from AND :to")
-    Page<Sale> findBySoldAtBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to, Pageable pageable);
+    // PAGINACIÓN: Ventas por sucursal Y rango de fechas (para reportes y filtros)
+    Page<Sale> findByBranchAndSoldAtBetween(String branch, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-    // Buscar ventas por sucursal y rango de fechas
-    @Query("SELECT s FROM Sale s WHERE s.branch = :branch AND s.soldAt BETWEEN :from AND :to")
-    Page<Sale> findByBranchAndSoldAtBetween(@Param("branch") String branch, @Param("from") LocalDateTime from, @Param("to") LocalDateTime to, Pageable pageable);
-
-    // Buscar ventas por rango de fechas (sin paginación, para agregados)
-    @Query("SELECT s FROM Sale s WHERE s.soldAt BETWEEN :from AND :to")
-    List<Sale> findBySoldAtBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
-
-    // Buscar ventas por sucursal y rango de fechas (sin paginación, para agregados)
-    @Query("SELECT s FROM Sale s WHERE s.branch = :branch AND s.soldAt BETWEEN :from AND :to")
-    List<Sale> findByBranchAndSoldAtBetween(@Param("branch") String branch, @Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+    //  PAGINACIÓN: Ventas por rango de fechas (para usuarios CENTRAL)
+    Page<Sale> findBySoldAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 }

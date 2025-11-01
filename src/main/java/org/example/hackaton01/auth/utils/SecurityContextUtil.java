@@ -3,10 +3,33 @@ package org.example.hackaton01.auth.utils;
 import org.example.hackaton01.user.domain.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityContextUtil {
+    public String getCurrentUserRole() {
+        // Obtener el Authentication del SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            // Asumiendo que tu UserDetails implementación tiene un método getRole()
+            // Depende de cómo hayas implementado la autenticación.
+            // Por ejemplo, si tu UserDetails implementación es UserDetails, quizás no tengas el rol.
+            // Si usas una clase custom, como UserPrincipal, entonces puedes hacer:
+            // return ((UserPrincipal) authentication.getPrincipal()).getRole();
+        }
+        return null;
+    }
+
+    public String getCurrentUserBranch() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            // Similar a getCurrentUserRole, pero para la sucursal.
+            // return ((UserPrincipal) authentication.getPrincipal()).getBranch();
+        }
+        return null;
+    }
+
 
     /**
      * Obtiene el usuario autenticado del SecurityContext
@@ -49,7 +72,7 @@ public class SecurityContextUtil {
      * Obtiene el ID del usuario autenticado
      * @return user ID
      */
-    public String getCurrentUserId() {
+    public Long getCurrentUserId() {
         return getCurrentUser().getId();
     }
 

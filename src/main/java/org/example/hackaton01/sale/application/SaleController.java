@@ -25,46 +25,41 @@ public class SaleController {
     private final SaleService saleService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('CENTRAL', 'BRANCH')")
     public ResponseEntity<SaleResponse> createSale(@Valid @RequestBody SaleRequest request) {
         SaleResponse response = saleService.createSale(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('CENTRAL', 'BRANCH')")
-    public ResponseEntity<SaleResponse> getSaleById(@PathVariable String id) {
+    public ResponseEntity<SaleResponse> getSaleById(@PathVariable Long id) {
         SaleResponse response = saleService.getSaleById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('CENTRAL', 'BRANCH')")
-    public ResponseEntity<Page<SaleResponse>> getAllSales(
+    public ResponseEntity<Page<SaleResponse>> getSales(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
             @RequestParam(required = false) String branch,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
+
         Pageable pageable = PageRequest.of(page, size);
         Page<SaleResponse> response = saleService.getAllSales(from, to, branch, pageable);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('CENTRAL', 'BRANCH')")
     public ResponseEntity<SaleResponse> updateSale(
-            @PathVariable String id,
-            @Valid @RequestBody SaleUpdateRequest request
-    ) {
+            @PathVariable Long id,
+            @Valid @RequestBody SaleUpdateRequest request) {
         SaleResponse response = saleService.updateSale(id, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('CENTRAL')")
-    public ResponseEntity<Void> deleteSale(@PathVariable String id) {
+    @PreAuthorize("hasRole('CENTRAL')") // Solo CENTRAL puede eliminar
+    public ResponseEntity<Void> deleteSale(@PathVariable Long id) {
         saleService.deleteSale(id);
         return ResponseEntity.noContent().build();
     }

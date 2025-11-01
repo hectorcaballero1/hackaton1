@@ -1,11 +1,10 @@
-package org.example.hackaton01.entity.sale;
+package org.example.hackaton01.sale.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,13 +17,8 @@ import java.time.LocalDateTime;
 public class Sale {
 
     @Id
-    @GeneratedValue(generator = "sale-id-generator")
-    @GenericGenerator(
-        name = "sale-id-generator",
-        strategy = "org.example.hackaton01.util.SaleIdGenerator"
-    )
-    @Column(length = 20)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotBlank(message = "El SKU es obligatorio")
     @Size(max = 50, message = "El SKU no puede tener más de 50 caracteres")
@@ -57,9 +51,23 @@ public class Sale {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    // Método de negocio: calcular el total de la venta
+    // ser usa para el calculo en el saleaggtregate
+    public BigDecimal getTotal() {
+        return price.multiply(BigDecimal.valueOf(units));
+    }
+    // Callbacks JPA
+    // para la fecha automatica de creacion
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+    //fecha automatica de actualizacion
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }
