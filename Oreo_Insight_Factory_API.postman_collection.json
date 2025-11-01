@@ -1,0 +1,666 @@
+{
+    "info": {
+        "_postman_id": "oreo-hackathon-v2",
+        "name": "Oreo Insight Factory - Hackathon Flow",
+        "description": "Flujo completo de validación según README.md - 10 pasos obligatorios",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Register CENTRAL",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Usuario CENTRAL creado', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene userId', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('id');",
+                            "    pm.environment.set('centralUserId', jsonData.id);",
+                            "});",
+                            "",
+                            "pm.test('Usuario es CENTRAL sin branch', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.role).to.eql('CENTRAL');",
+                            "    pm.expect(jsonData.branch).to.be.null;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"oreo.admin\",\n    \"email\": \"admin@oreo.com\",\n    \"password\": \"Oreo1234\",\n    \"role\": \"CENTRAL\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/auth/register",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["auth", "register"]
+                }
+            }
+        },
+        {
+            "name": "2. Login CENTRAL",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 200 - Login exitoso', function() {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene token', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('token');",
+                            "    pm.environment.set('centralToken', jsonData.token);",
+                            "});",
+                            "",
+                            "pm.test('Token guardado como centralToken', function() {",
+                            "    pm.expect(pm.environment.get('centralToken')).to.not.be.empty;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"oreo.admin\",\n    \"password\": \"Oreo1234\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/auth/login",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["auth", "login"]
+                }
+            }
+        },
+        {
+            "name": "3. Register BRANCH (Miraflores)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Usuario BRANCH creado', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene userId', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('id');",
+                            "    pm.environment.set('branchUserId', jsonData.id);",
+                            "});",
+                            "",
+                            "pm.test('Usuario es BRANCH con sucursal Miraflores', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.role).to.eql('BRANCH');",
+                            "    pm.expect(jsonData.branch).to.eql('Miraflores');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"miraflores.user\",\n    \"email\": \"mira@oreo.com\",\n    \"password\": \"Oreo1234\",\n    \"role\": \"BRANCH\",\n    \"branch\": \"Miraflores\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/auth/register",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["auth", "register"]
+                }
+            }
+        },
+        {
+            "name": "4. Login BRANCH",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 200 - Login BRANCH exitoso', function() {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene token', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('token');",
+                            "    pm.environment.set('branchToken', jsonData.token);",
+                            "});",
+                            "",
+                            "pm.test('Token guardado como branchToken', function() {",
+                            "    pm.expect(pm.environment.get('branchToken')).to.not.be.empty;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"miraflores.user\",\n    \"password\": \"Oreo1234\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/auth/login",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["auth", "login"]
+                }
+            }
+        },
+        {
+            "name": "5.1. Crear Venta 1 - Miraflores (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Venta 1 creada', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene id de venta', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('id');",
+                            "    if (!pm.environment.get('saleId1')) {",
+                            "        pm.environment.set('saleId1', jsonData.id);",
+                            "    }",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sku\": \"OREO_CLASSIC_12\",\n    \"units\": 25,\n    \"price\": 1.99,\n    \"branch\": \"Miraflores\",\n    \"soldAt\": \"2025-09-01T10:30:00Z\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "5.2. Crear Venta 2 - Miraflores (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Venta 2 creada', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sku\": \"OREO_DOUBLE\",\n    \"units\": 40,\n    \"price\": 2.49,\n    \"branch\": \"Miraflores\",\n    \"soldAt\": \"2025-09-02T15:10:00Z\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "5.3. Crear Venta 3 - San Isidro (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Venta 3 creada', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sku\": \"OREO_THINS\",\n    \"units\": 32,\n    \"price\": 2.19,\n    \"branch\": \"San Isidro\",\n    \"soldAt\": \"2025-09-03T11:05:00Z\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "5.4. Crear Venta 4 - San Isidro (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Venta 4 creada', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sku\": \"OREO_DOUBLE\",\n    \"units\": 55,\n    \"price\": 2.49,\n    \"branch\": \"San Isidro\",\n    \"soldAt\": \"2025-09-04T18:50:00Z\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "5.5. Crear Venta 5 - Miraflores (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 201 - Venta 5 creada', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});",
+                            "",
+                            "pm.test('Todas las 5 ventas creadas exitosamente', function() {",
+                            "    pm.expect(pm.environment.get('saleId1')).to.not.be.undefined;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sku\": \"OREO_CLASSIC_12\",\n    \"units\": 20,\n    \"price\": 1.99,\n    \"branch\": \"Miraflores\",\n    \"soldAt\": \"2025-09-05T09:40:00Z\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "6. Listar todas las ventas (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 200 - Listado exitoso', function() {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test('Response contiene ventas de todas las sucursales', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.content).to.be.an('array');",
+                            "    pm.expect(jsonData.content.length).to.be.greaterThan(0);",
+                            "});",
+                            "",
+                            "pm.test('CENTRAL puede ver ventas de Miraflores y San Isidro', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    var branches = jsonData.content.map(sale => sale.branch);",
+                            "    var hasMiraflores = branches.includes('Miraflores');",
+                            "    var hasSanIsidro = branches.includes('San Isidro');",
+                            "    pm.expect(hasMiraflores || hasSanIsidro).to.be.true;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "7. Listar ventas (BRANCH - solo Miraflores)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 200 - Listado exitoso', function() {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test('BRANCH solo ve ventas de su sucursal (Miraflores)', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.content).to.be.an('array');",
+                            "    ",
+                            "    jsonData.content.forEach(function(sale) {",
+                            "        pm.expect(sale.branch).to.eql('Miraflores');",
+                            "    });",
+                            "});",
+                            "",
+                            "pm.test('No debe ver ventas de San Isidro', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    var hasSanIsidro = jsonData.content.some(sale => sale.branch === 'San Isidro');",
+                            "    pm.expect(hasSanIsidro).to.be.false;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{branchToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "8. Solicitar resumen asíncrono (BRANCH)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 202 - Accepted (procesamiento asíncrono)', function() {",
+                            "    pm.response.to.have.status(202);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene requestId', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('requestId');",
+                            "    pm.expect(jsonData.requestId).to.not.be.empty;",
+                            "});",
+                            "",
+                            "pm.test('Status es PROCESSING', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.status).to.eql('PROCESSING');",
+                            "});",
+                            "",
+                            "pm.test('Response tiene mensaje y estimatedTime', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('message');",
+                            "    pm.expect(jsonData).to.have.property('estimatedTime');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{branchToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"from\": \"2025-09-01\",\n    \"to\": \"2025-09-07\",\n    \"branch\": \"Miraflores\",\n    \"emailTo\": \"gerente@oreo.com\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales/summary/weekly",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales", "summary", "weekly"]
+                }
+            }
+        },
+        {
+            "name": "9. Intentar crear venta en otra sucursal (BRANCH) - DEBE FALLAR",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 403 - Forbidden (sin permisos)', function() {",
+                            "    pm.response.to.have.status(403);",
+                            "});",
+                            "",
+                            "pm.test('Response tiene error FORBIDDEN', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.error).to.eql('FORBIDDEN');",
+                            "});",
+                            "",
+                            "pm.test('Mensaje indica falta de permisos para la sucursal', function() {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.message).to.include('sucursal');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{branchToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sku\": \"OREO_GOLDEN\",\n    \"units\": 10,\n    \"price\": 3.49,\n    \"branch\": \"San Isidro\",\n    \"soldAt\": \"2025-09-06T14:20:00Z\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/sales",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales"]
+                }
+            }
+        },
+        {
+            "name": "10. Eliminar venta (CENTRAL)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status 204 - No Content (eliminación exitosa)', function() {",
+                            "    pm.response.to.have.status(204);",
+                            "});",
+                            "",
+                            "pm.test('Response body está vacío', function() {",
+                            "    pm.expect(pm.response.text()).to.be.empty;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{centralToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/sales/{{saleId1}}",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["sales", "{{saleId1}}"]
+                }
+            }
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "centralToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "branchToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "centralUserId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "branchUserId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "saleId1",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}

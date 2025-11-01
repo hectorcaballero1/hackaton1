@@ -97,7 +97,8 @@ public class SecurityContextUtil {
      * @return true si es CENTRAL, false si no
      */
     public boolean isCentralRole() {
-        return "CENTRAL".equals(getCurrentRole());
+        String role = getCurrentRole();
+        return "ROLE_CENTRAL".equals(role) || "CENTRAL".equals(role);
     }
 
     /**
@@ -105,7 +106,8 @@ public class SecurityContextUtil {
      * @return true si es BRANCH, false si no
      */
     public boolean isBranchRole() {
-        return "BRANCH".equals(getCurrentRole());
+        String role = getCurrentRole();
+        return "ROLE_BRANCH".equals(role) || "BRANCH".equals(role);
     }
 
     /**

@@ -33,3 +33,7 @@ build/
 .vscode/
 # Archivos de configuración sensibles
 .env
+
+
+# Windows reserved device filename accidentally created in repo
+nul

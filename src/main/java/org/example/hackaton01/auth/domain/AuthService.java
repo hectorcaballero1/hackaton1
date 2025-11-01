@@ -6,6 +6,9 @@ import org.example.hackaton01.auth.dto.LoginRequest;
 import org.example.hackaton01.auth.dto.RegisterRequest;
 import org.example.hackaton01.auth.events.UserRegisteredEvent;
 import org.example.hackaton01.auth.utils.JwtUtil;
+import org.example.hackaton01.exception.BadRequestException;
+import org.example.hackaton01.exception.ConflictException;
+import org.example.hackaton01.exception.UnauthorizedException;
 import org.example.hackaton01.user.domain.User;
 import org.example.hackaton01.user.domain.UserRole;
 import org.example.hackaton01.user.dto.UserResponse;
@@ -80,31 +83,31 @@ public class AuthService {
                     .build();
 
         } catch (Exception e) {
-            throw new RuntimeException("Credenciales inválidas");
+            throw new UnauthorizedException("Credenciales inválidas");
         }
     }
 
 
     private void validateRegistration(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username ya existe");
+            throw new ConflictException("El username '" + request.getUsername() + "' ya existe");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email ya existe");
+            throw new ConflictException("El email '" + request.getEmail() + "' ya está registrado");
         }
 
         try {
             UserRole.valueOf("ROLE_" + request.getRole());
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Role debe ser CENTRAL o BRANCH");
+            throw new BadRequestException("Role debe ser CENTRAL o BRANCH");
         }
 
         if (request.getRole().equals("BRANCH") &&
                 (request.getBranch() == null || request.getBranch().isBlank())) {
-            throw new RuntimeException("Branch es obligatorio para BRANCH");
+            throw new BadRequestException("Branch es obligatorio para usuarios BRANCH");
         }
         if (request.getRole().equals("CENTRAL") && request.getBranch() != null) {
-            throw new RuntimeException("CENTRAL no debe tener branch");
+            throw new BadRequestException("Usuarios CENTRAL no deben tener branch asignado");
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.example.hackaton01.user.domain;
 
 import lombok.RequiredArgsConstructor;
+import org.example.hackaton01.exception.ResourceNotFoundException;
 import org.example.hackaton01.user.dto.UserResponse;
 import org.example.hackaton01.user.infrastructure.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -34,7 +35,7 @@ public class UserService{
 
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
         return modelMapper.map(user, UserResponse.class);
     }
 
@@ -43,7 +44,7 @@ public class UserService{
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new UsernameNotFoundException("usuario no enconrado con el id " + id);
+            throw new ResourceNotFoundException("Usuario no encontrado con ID: " + id);
         }
         userRepository.deleteById(id);
     }

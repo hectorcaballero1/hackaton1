@@ -2,6 +2,8 @@ package org.example.hackaton01.sale.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.example.hackaton01.auth.utils.SecurityContextUtil;
+import org.example.hackaton01.exception.ForbiddenException;
+import org.example.hackaton01.exception.ResourceNotFoundException;
 import org.example.hackaton01.sale.dto.SaleRequest;
 import org.example.hackaton01.sale.dto.SaleResponse;
 import org.example.hackaton01.sale.dto.SaleUpdateRequest;
@@ -46,7 +48,7 @@ public class SaleService {
     @Transactional(readOnly = true)
     public SaleResponse getSaleById(Long id) {
         Sale sale = saleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada con ID: " + id));
 
         validateBranchPermission(sale.getBranch());
         return convertToResponse(sale);
@@ -93,14 +95,14 @@ public class SaleService {
     @Transactional
     public SaleResponse updateSale(Long id, SaleUpdateRequest request) {
         Sale sale = saleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada con ID: " + id));
 
 
         validateBranchPermission(sale.getBranch());
 
 
         if (securityContextUtil.isBranchRole() && !sale.getBranch().equals(request.getBranch())) {
-            throw new RuntimeException("No puedes cambiar la sucursal");
+            throw new ForbiddenException("No puedes cambiar la sucursal de una venta");
         }
 
         modelMapper.map(request, sale);
@@ -113,11 +115,11 @@ public class SaleService {
     @Transactional
     public void deleteSale(Long id) {
         if (!securityContextUtil.isCentralRole()) {
-            throw new RuntimeException("Solo usuarios CENTRAL pueden eliminar ventas");
+            throw new ForbiddenException("Solo usuarios CENTRAL pueden eliminar ventas");
         }
 
         if (!saleRepository.existsById(id)) {
-            throw new RuntimeException("Venta no encontrada");
+            throw new ResourceNotFoundException("Venta no encontrada con ID: " + id);
         }
 
         saleRepository.deleteById(id);
@@ -129,7 +131,7 @@ public class SaleService {
     private void validateBranchPermission(String targetBranch) {
         if (securityContextUtil.isBranchRole() &&
                 !targetBranch.equals(securityContextUtil.getCurrentBranch())) {
-            throw new RuntimeException("No tienes permisos para esta sucursal: " + targetBranch);
+            throw new ForbiddenException("No tienes permisos para acceder a la sucursal: " + targetBranch);
         }
     }
 
