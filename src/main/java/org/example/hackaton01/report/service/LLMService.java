@@ -4,6 +4,7 @@ import com.azure.ai.inference.ChatCompletionsClient;
 import com.azure.ai.inference.models.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.hackaton01.exception.ServiceUnavailableException;
 import org.example.hackaton01.sale.saleagregation.dto.SalesAggregatesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,10 @@ public class LLMService {
 
         } catch (Exception e) {
             log.error("Error al generar resumen con LLM: {}", e.getMessage(), e);
-            return buildFallbackSummary(aggregates);
+            throw new ServiceUnavailableException(
+                "El servicio de LLM (GitHub Models) no está disponible en este momento. " +
+                "Por favor, intente más tarde."
+            );
         }
     }
 

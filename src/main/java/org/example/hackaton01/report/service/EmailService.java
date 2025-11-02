@@ -2,6 +2,7 @@ package org.example.hackaton01.report.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.hackaton01.exception.ServiceUnavailableException;
 import org.example.hackaton01.sale.saleagregation.dto.SalesAggregatesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -33,8 +34,11 @@ public class EmailService {
             log.info("Email enviado a: {}", toEmail);
 
         } catch (Exception e) {
-            log.error(" Error enviando email a {}: {}", toEmail, e.getMessage());
-            throw new RuntimeException("No se pudo enviar el email");
+            log.error("Error enviando email a {}: {}", toEmail, e.getMessage());
+            throw new ServiceUnavailableException(
+                "El servicio de email no está disponible en este momento. " +
+                "Por favor, intente más tarde. Error: " + e.getMessage()
+            );
         }
     }
 

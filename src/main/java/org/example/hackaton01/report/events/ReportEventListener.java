@@ -2,6 +2,7 @@ package org.example.hackaton01.report.events;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.hackaton01.exception.ServiceUnavailableException;
 import org.example.hackaton01.report.service.EmailService;
 import org.example.hackaton01.report.service.LLMService;
 import org.example.hackaton01.sale.domain.Sale;
@@ -50,11 +51,12 @@ public class ReportEventListener {
                     event.getTo()
             );
 
-            log.info(" Reporte {} enviado a {}", event.getRequestId(), event.getEmailTo());
+            log.info("Reporte {} enviado a {}", event.getRequestId(), event.getEmailTo());
 
+        } catch (ServiceUnavailableException e) {
+            log.error("Servicio no disponible para reporte {}: {}", event.getRequestId(), e.getMessage());
         } catch (Exception e) {
-            log.error(" Error en reporte {}: {}", event.getRequestId(), e.getMessage(), e);
-
+            log.error("Error inesperado en reporte {}: {}", event.getRequestId(), e.getMessage(), e);
         }
     }
 }
